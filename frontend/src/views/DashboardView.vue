@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { store } from '../store'
 import { apiKeyService } from '../services/apiKeyService'
-import { formatDate, maskedKey, isKeyExpired, keyExpiryLabel } from '../utils'
+import { formatDate, maskedKey, isKeyExpired, keyExpiryLabel,API_BASE_URL } from '../utils'
 
 const activeKeys = computed(() =>
   store.apiKeys.filter(k => k.status === 'Active' && !isKeyExpired(k)).length
@@ -20,7 +20,7 @@ const copyKey = (key) => {
 }
 
 const copyUrl = () => {
-  navigator.clipboard.writeText('https://yourdomain/api/v1')
+  navigator.clipboard.writeText(API_BASE_URL+'/api/v1')
   showToast('API Endpoint copied to clipboard!')
 }
 
@@ -166,7 +166,7 @@ onMounted(() => {
         >
           <div>
             <p style="margin:0; font-size: 0.85rem; color: #64748b;">Base API Endpoint</p>
-            <p style="margin: 0.5rem 0 0 0; font-family: monospace; font-size: 1rem; color: #0f172a; font-weight: 600; word-break: break-all;">https://yourdomain/api/v1</p>
+            <p style="margin: 0.5rem 0 0 0; font-family: monospace; font-size: 1rem; color: #0f172a; font-weight: 600; word-break: break-all;">{{API_BASE_URL}}/api/v1</p>
           </div>
           <button style="background: #e2e8f0; border: none; padding: 6px 12px; border-radius: 6px; color: #0f172a; font-size: 0.85rem; font-weight: 600; cursor: pointer;">Copy</button>
         </div>
