@@ -163,7 +163,7 @@ async def register_face_endpoint(
             file_path = os.path.join(uploads_dir, filename)
             cv2.imwrite(file_path, img)
             base_url = str(request.base_url).rstrip("/") if request else ""
-            image_url = f"{base_url}/api/v1/uploads/faces/{filename}"
+            image_url = f"{filename}"
         
         # (ID uniqueness check already performed above)
         known_faces_db.append({
@@ -399,7 +399,7 @@ async def register_face_noliveness_endpoint(
             file_path = os.path.join(uploads_dir, filename)
             cv2.imwrite(file_path, img)
             base_url = str(request.base_url).rstrip("/") if request else ""
-            image_url = f"{base_url}/api/v1/uploads/faces/{filename}"
+            image_url = f"{filename}"
         
         # (ID uniqueness check already performed above)
         known_faces_db.append({
@@ -466,7 +466,7 @@ async def register_face_live_endpoint(
             file_path = os.path.join(uploads_dir, filename)
             cv2.imwrite(file_path, img)
             base_url = str(request.base_url).rstrip("/") if request else ""
-            image_url = f"{base_url}/api/v1/uploads/faces/{filename}"
+            image_url = f"{filename}"
         
         # (ID uniqueness check already performed above)
         known_faces_db.append({"id": user_id, "name": final_name, "embedding": embedding})

@@ -12,7 +12,7 @@ from backend.app.database import models as db_models
 from backend.app.core.config import ANTI_SPOOF_MODEL_PATH, EMOTION_MODEL_PATH
 import uuid
 import requests
-
+import time
 
 # JWT Secret Key
 # ================= KONFIGURASI =================
@@ -78,6 +78,7 @@ def get_tenant_faces(db_session, user_id):
             result.append({
                 "id": row.face_id,
                 "name": row.name,
+                "image_url": row.image_url,
                 "embedding": np.array(emb_list, dtype=np.float32)
             })
         except Exception as e:
@@ -623,13 +624,14 @@ def process_recognize_logic(img, tenant_faces):
     if len(faces) > 1:
         return {"status": "error", "message": "Multiple faces detected."}
     
+    start_time= time.time()
     target_face = faces[0]
     # Liveness check disabled as requested
     # score, is_real = check_liveness(img, target_face.bbox)
     # 
     # if not is_real:
     #     return {"status": "error", "message": "Spoof face detected"}
-
+    
     target_embedding = target_face.embedding
     best_score = 0
     best_match = None
@@ -642,8 +644,8 @@ def process_recognize_logic(img, tenant_faces):
             
     if best_score > 0.50:
         return {
-            "status": "success", "match": True,
-            "data": { "id": best_match['id'], "name": best_match['name'], "similarity": float(best_score) }
+            "status": "success", "match": True, "take_time": round((time.time() - start_time) * 1000, 2),
+            "data": { "id": best_match['id'], "name": best_match['name'], "image_url": best_match['image_url'], "similarity": float(best_score) }
         }
     else:
         return { "status": "success", "match": False, "message": "Face not recognized" }
