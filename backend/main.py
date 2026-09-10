@@ -30,7 +30,8 @@ def create_default_admin():
             admin = User(
                 email=admin_email,
                 password_hash=get_password_hash("askingme"),
-                name="System Admin"
+                name="System Admin",
+                store_images=True
             )
             db.add(admin)
             db.commit()

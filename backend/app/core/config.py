@@ -10,8 +10,9 @@ if not DATABASE_URL:
     DB_USER = os.getenv("DB_USER", "raray")
     DB_PASS = os.getenv("DB_PASS", "yourpassword")
     DB_HOST = os.getenv("DB_HOST", "localhost")
+    DB_PORT = os.getenv("DB_PORT", "5432")
     DB_NAME = os.getenv("DB_NAME", "rarayvision")
-    DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
+    DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 # Environment mode: "development" (default) or "production"
 ENV = os.getenv("ENV", "development").lower()

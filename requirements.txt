@@ -8,7 +8,7 @@ opencv-python
 numpy
 python-multipart
 SQLAlchemy>=2.0.29
-PyMySQL==1.1.0
+psycopg2-binary>=2.9.9
 cryptography
 passlib[bcrypt]==1.7.4
 PyJWT==2.8.0
