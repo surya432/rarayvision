@@ -1,0 +1,62 @@
+{
+  "extends": "@react-native/typescript-config",
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./src"
+        ],
+        "extensions": [
+          ".ios.js",
+          ".android.js",
+          ".js",
+          ".ts",
+          ".tsx",
+          ".json",
+        ],
+        "alias": {
+          "tests": [
+            "./tests/"
+          ],
+          "@components": "./src/components",
+          "@core": "./src/core",
+          "@router": "./src/router",
+        }
+      }
+    ]
+  ],
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "node"
+    ],
+    "ignoreDeprecations": "5.0",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "src/*"
+      ],
+      "tests": [
+        "tests/*"
+      ],
+      "@router/*": [
+        "src/router/*"
+      ],
+      "@core/*": [
+        "src/core/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+    },
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/Pods"
+  ]
+}

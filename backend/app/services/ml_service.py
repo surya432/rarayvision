@@ -9,7 +9,7 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from backend.app.database import database as db
 from backend.app.database import models as db_models
-from backend.app.core.config import ANTI_SPOOF_MODEL_PATH, EMOTION_MODEL_PATH
+from backend.app.core.config import ANTI_SPOOF_MODEL_PATH, EMOTION_MODEL_PATH, FACE_RECOGNITION_THRESHOLD
 import uuid
 import requests
 import time
@@ -482,7 +482,8 @@ def process_recognize_live(img, tenant_faces, mode="identify"):
                 best_score = sim
                 best_match = user
 
-        if best_score > 0.50:
+        from backend.app.core.config import FACE_RECOGNITION_THRESHOLD
+        if best_score > FACE_RECOGNITION_THRESHOLD:
             return {
                 "status": "success", "match": True, "mode": mode,
                 "data": {
@@ -594,7 +595,8 @@ def process_recognize_live(img, tenant_faces, mode="identify"):
             best_score = sim
             best_match = user
 
-    if best_score > 0.50:
+    from backend.app.core.config import FACE_RECOGNITION_THRESHOLD
+    if best_score > FACE_RECOGNITION_THRESHOLD:
         return {
             "status": "success", "match": True, "mode": mode,
             "data": {
@@ -626,11 +628,10 @@ def process_recognize_logic(img, tenant_faces):
     
     start_time= time.time()
     target_face = faces[0]
-    # Liveness check disabled as requested
-    # score, is_real = check_liveness(img, target_face.bbox)
-    # 
-    # if not is_real:
-    #     return {"status": "error", "message": "Spoof face detected"}
+    # Liveness check (enabled)
+    score, is_real = check_liveness(img, target_face.bbox, kps=target_face.kps)
+    if not is_real:
+        return {"status": "error", "message": "Spoof face detected"}
     
     target_embedding = target_face.embedding
     best_score = 0
@@ -642,7 +643,7 @@ def process_recognize_logic(img, tenant_faces):
             best_score = sim
             best_match = user
             
-    if best_score > 0.50:
+    if best_score > FACE_RECOGNITION_THRESHOLD:
         return {
             "status": "success", "match": True, "take_time": round((time.time() - start_time) * 1000, 2),
             "data": { "id": best_match['id'], "name": best_match['name'], "image_url": best_match['image_url'], "similarity": float(best_score) }
@@ -675,7 +676,7 @@ def process_recognize_multi(img, tenant_faces):
                 best_score = sim
                 best_match = user
                 
-        if best_score > 0.50:
+        if best_score > FACE_RECOGNITION_THRESHOLD:
             results.append({
                 "match": True,
                 "data": {
@@ -731,7 +732,7 @@ def process_global_face_login(img, db_session):
         except Exception as e:
             continue
             
-    if best_score > 0.50 and best_match:
+    if best_score > FACE_RECOGNITION_THRESHOLD and best_match:
         # Get the User associated with this face
         user = db_session.query(db_models.User).filter(db_models.User.id == best_match.user_id).first()
         if user:
