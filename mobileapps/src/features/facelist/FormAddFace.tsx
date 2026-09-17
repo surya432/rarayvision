@@ -1,8 +1,9 @@
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
 import React from 'react'
-import { buildUrlImage } from 'core/utility/Contants'
 import { useObservable, useValue } from '@legendapp/state/react'
 import { useNavigation } from '@react-navigation/native'
+import { addFace, getListFaces } from './actions/action'
 
 const FormAddFace = () => {
     const form$ = useObservable<{ name: string; foto: string | null }>({
@@ -16,13 +17,34 @@ const FormAddFace = () => {
 
     const navigation = useNavigation()
     const handleChoosePhoto = () => {
-        // form$.foto.set(buildUrlImage('1_face_1aa265b4.jpg'))
-        navigation.navigate('CaptureFoto', {
-            onDone: (text) => form$.foto.set(text)
-        })
+        Alert.alert('Pilih Sumber Foto', undefined, [
+            {
+                text: 'Kamera',
+                onPress: () => {
+                    launchCamera({ mediaType: 'photo' }, response => {
+                        if (response.didCancel) return
+                        if (response.assets && response.assets[0].uri) {
+                            form$.foto.set(response.assets[0].uri)
+                        }
+                    })
+                },
+            },
+            {
+                text: 'Galeri',
+                onPress: () => {
+                    launchImageLibrary({ mediaType: 'photo' }, response => {
+                        if (response.didCancel) return
+                        if (response.assets && response.assets[0].uri) {
+                            form$.foto.set(response.assets[0].uri)
+                        }
+                    })
+                },
+            },
+            { text: 'Batal', style: 'cancel' },
+        ])
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
         const trimmedName = name.trim()
 
         if (!trimmedName) {
@@ -34,10 +56,16 @@ const FormAddFace = () => {
             Alert.alert('Validasi', 'Foto wajah belum dipilih.')
             return
         }
-
-        Alert.alert('Berhasil', `Data ${trimmedName} siap disimpan.`)
-        form$.name.set('')
-        form$.foto.set(null)
+        
+        try {
+            const data = await addFace({ foto: foto, name: trimmedName })
+            await getListFaces()
+            Alert.alert('Berhasil', data?.message)
+            form$.name.set('')
+            form$.foto.set(null)
+        } catch (error) {
+            Alert.alert('Gagal', error?.message)
+        }
     }
 
     return (

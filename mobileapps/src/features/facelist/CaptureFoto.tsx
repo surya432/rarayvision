@@ -124,6 +124,7 @@ const CaptureFoto = () => {
             </View>
         )
     }
+    
     return (
         <View style={styles.container}>
             <CameraComponent onDone={(text: string) => params?.onDone?.(text)} />
@@ -154,6 +155,8 @@ const CameraComponent = ({ onDone }: { onDone?: (uri: string) => void }) => {
 
     const { result, validate } = useFaceFrameValidator(frame)
     const lastValidationRef = useRef<number>(0)
+    // Ensure we capture photo only once when validation becomes valid
+    const takenRef = useRef<boolean>(false)
 
     const takepic = async () => {
         try {
@@ -174,10 +177,12 @@ const CameraComponent = ({ onDone }: { onDone?: (uri: string) => void }) => {
         }
     }
     useEffect(() => {
-        if (!result.isValid) return;
-        takepic()
-
-        return () => { }
+        // Trigger photo capture only once when the face validation passes
+        if (result.isValid && !takenRef.current) {
+            takenRef.current = true
+            takepic()
+        }
+        // No cleanup needed
     }, [result.isValid])
 
     const handleFacesDetected = useCallback(
@@ -206,6 +211,7 @@ const CameraComponent = ({ onDone }: { onDone?: (uri: string) => void }) => {
             style={StyleSheet.absoluteFill}
             device={device!}
             isActive
+            
             outputs={[photoOutput]}
             onFacesDetected={handleFacesDetected}
             onError={handleError}
@@ -217,7 +223,6 @@ const CameraComponent = ({ onDone }: { onDone?: (uri: string) => void }) => {
             {cameraElement}
             {result.status === "no-face" && <NoFaceFrame />}
             {result.status !== 'no-face' && <View style={{ flex: 1 }}>
-
                 <FaceFrame
                     width={frame.width}
                     height={frame.height}

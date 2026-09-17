@@ -348,7 +348,7 @@ def process_register_logic(img, check_spoof=True):
     if check_spoof:
         score, is_real = check_liveness(img, face.bbox, kps=face.kps)
         if not is_real:
-            return {"status": "error", "message": "Spoof face or screen detected"}
+            return {"status": "error", "message": "Spoof face or screen detected", "score":score, "is_real":is_real}
 
     return {
         "status": "success",

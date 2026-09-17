@@ -26,9 +26,10 @@
     "react-native-config": "^1.7.2",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-image-marker": "^2.1.0",
+    "react-native-image-picker": "^8.2.1",
     "react-native-mmkv": "^4.3.2",
     "react-native-nitro-image": "^0.15.1",
-    "react-native-nitro-modules": "^0.36.3",
+    "react-native-nitro-modules": "0.36.3",
     "react-native-safe-area-context": "^5.8.0",
     "react-native-screens": "^4.26.2",
     "react-native-vision-camera": "^5.2.0",
@@ -58,6 +59,9 @@
     "react-native-dotenv": "^4.1.1",
     "react-test-renderer": "19.2.3",
     "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "react-native-nitro-modules": "*"
   },
   "engines": {
     "node": ">= 22.11.0"
